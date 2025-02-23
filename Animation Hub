@@ -1,0 +1,22 @@
+-- R15 Animation Pack with GUI Hub -- This script creates a simple UI to select animations for R15 characters
+
+local Animations = { Idle = "http://www.roblox.com/asset/?id=507766666", -- Example Animation ID Walk = "http://www.roblox.com/asset/?id=507777826", Run = "http://www.roblox.com/asset/?id=507767714", Jump = "http://www.roblox.com/asset/?id=507765000", Fall = "http://www.roblox.com/asset/?id=507767968" }
+
+local Player = game.Players.LocalPlayer local Character = Player.Character or Player.CharacterAdded:Wait() local Humanoid = Character:WaitForChild("Humanoid")
+
+-- Create UI local ScreenGui = Instance.new("ScreenGui") ScreenGui.Parent = game.CoreGui
+
+local Frame = Instance.new("Frame") Frame.Size = UDim2.new(0, 200, 0, 300) Frame.Position = UDim2.new(0, 10, 0, 10) Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50) Frame.Parent = ScreenGui
+
+for Name, Id in pairs(Animations) do local Button = Instance.new("TextButton") Button.Size = UDim2.new(1, -10, 0, 50) Button.Position = UDim2.new(0, 5, 0, #Frame:GetChildren() * 50) Button.BackgroundColor3 = Color3.fromRGB(100, 100, 100) Button.Text = Name Button.Parent = Frame
+
+Button.MouseButton1Click:Connect(function()
+    local Animator = Humanoid:FindFirstChild("Animator") or Instance.new("Animator", Humanoid)
+    local Animation = Instance.new("Animation")
+    Animation.AnimationId = Id
+    local Track = Animator:LoadAnimation(Animation)
+    Track:Play()
+end)
+
+end
+
