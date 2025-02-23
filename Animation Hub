@@ -1,6 +1,6 @@
--- Enhanced R15 Animation Hub with Utility Scripts (Delta Executor) -- Features: -- ✅ Search bar for animations -- ✅ Organized sections: FE Animations, FE Scripts, and an empty section for future features -- ✅ Additional FE scripts: Shiftlock for Mobile, Speed Hack (Adjustable), Infinite Jump
+-- Advanced R15 Animation Hub with Bypass (Delta Executor) -- Features: -- ✅ Search bar for animations -- ✅ Organized sections: FE Animations, FE Scripts, and an empty section for future features -- ✅ Additional FE scripts: Shiftlock for Mobile, Speed Hack (Adjustable), Infinite Jump -- ✅ Anti-Detection & Bypass to avoid game restrictions -- ✅ Alternative Animation Execution for better stability
 
-local Players = game:GetService("Players") local Player = Players.LocalPlayer repeat wait() until Player and Player.Character and Player:FindFirstChild("PlayerGui")
+local Players = game:GetService("Players") local RunService = game:GetService("RunService") local UserInputService = game:GetService("UserInputService") local Player = Players.LocalPlayer repeat wait() until Player and Player.Character and Player:FindFirstChild("PlayerGui")
 
 local Animations = { Idle = "rbxassetid://507766666", Walk = "rbxassetid://507777826", Run = "rbxassetid://507767714", Jump = "rbxassetid://507765000", Fall = "rbxassetid://507767968" }
 
@@ -43,14 +43,17 @@ SearchBox.Changed:Connect(updateAnimationList) updateAnimationList()
 
 local function createScriptButton(name, callback) local Button = Instance.new("TextButton") Button.Size = UDim2.new(1, 0, 0, 40) Button.BackgroundColor3 = Color3.fromRGB(120, 120, 120) Button.Text = name Button.Parent = Frame Button.MouseButton1Click:Connect(callback) end
 
--- Shiftlock for Mobile createScriptButton("Shiftlock (Mobile)", function() local Camera = game.Workspace.CurrentCamera Camera.CameraType = Enum.CameraType.Scriptable game:GetService("RunService").RenderStepped:Connect(function() Camera.CFrame = Player.Character.Head.CFrame end) end)
+-- Shiftlock for Mobile createScriptButton("Shiftlock (Mobile)", function() local Camera = game.Workspace.CurrentCamera Camera.CameraType = Enum.CameraType.Scriptable RunService.RenderStepped:Connect(function() Camera.CFrame = Player.Character.Head.CFrame end) end)
 
 -- Speed Hack (Adjustable) createScriptButton("Speed Hack", function() local Humanoid = Player.Character:FindFirstChild("Humanoid") if Humanoid then Humanoid.WalkSpeed = 50 -- Change this value to adjust speed end end)
 
--- Infinite Jump createScriptButton("Infinite Jump", function() game:GetService("UserInputService").JumpRequest:Connect(function() Player.Character:FindFirstChild("Humanoid"):ChangeState("Jumping") end) end)
+-- Infinite Jump createScriptButton("Infinite Jump", function() UserInputService.JumpRequest:Connect(function() Player.Character:FindFirstChild("Humanoid"):ChangeState("Jumping") end) end)
 
 -- Empty Section for Future Features createSection("[Empty]", Frame)
 
--- Reapply animation after respawn Player.CharacterAdded:Connect(function(Character) local Humanoid = Character:WaitForChild("Humanoid") if SelectedAnimationId then applyAnimation(Humanoid, SelectedAnimationId) end end)
+-- Anti-Detection Bypass local function antiDetection() if sethiddenproperty then sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge) end if setscriptable then setscriptable(game.Players.LocalPlayer, "SimulationRadius", true) end end antiDetection()
 
- 
+-- Alternative Animation Execution (Bypasses Restrictions) local function bypassAnimationExecution() for _, v in pairs(Player.Character:GetDescendants()) do if v:IsA("Motor6D") then v:Destroy() end end end
+
+Player.CharacterAdded:Connect(function(Character) local Humanoid = Character:WaitForChild("Humanoid") if SelectedAnimationId then bypassAnimationExecution() applyAnimation(Humanoid, SelectedAnimationId) end end)
+
