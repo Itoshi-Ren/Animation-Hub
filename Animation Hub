@@ -1,24 +1,56 @@
--- R15 Animation Pack with GUI Hub (Fixed Version) -- This script creates a simple UI to select animations for R15 characters
+-- Enhanced R15 Animation Hub with Utility Scripts (Delta Executor) -- Features: -- ✅ Search bar for animations -- ✅ Organized sections: FE Animations, FE Scripts, and an empty section for future features -- ✅ Additional FE scripts: Shiftlock for Mobile, Speed Hack (Adjustable), Infinite Jump
 
-local Animations = { Idle = "rbxassetid://507766666", -- Example Animation ID Walk = "rbxassetid://507777826", Run = "rbxassetid://507767714", Jump = "rbxassetid://507765000", Fall = "rbxassetid://507767968" }
+local Players = game:GetService("Players") local Player = Players.LocalPlayer repeat wait() until Player and Player.Character and Player:FindFirstChild("PlayerGui")
 
-local Player = game.Players.LocalPlayer local Character = Player.Character or Player.CharacterAdded:Wait() local Humanoid = Character:WaitForChild("Humanoid")
+local Animations = { Idle = "rbxassetid://507766666", Walk = "rbxassetid://507777826", Run = "rbxassetid://507767714", Jump = "rbxassetid://507765000", Fall = "rbxassetid://507767968" }
 
--- Create UI inside PlayerGui local ScreenGui = Instance.new("ScreenGui") ScreenGui.Name = "AnimationHub" ScreenGui.Parent = Player:WaitForChild("PlayerGui")
+-- Create GUI inside PlayerGui local ScreenGui = Instance.new("ScreenGui") ScreenGui.Name = "AnimationHub" ScreenGui.ResetOnSpawn = false ScreenGui.Parent = Player:FindFirstChild("PlayerGui")
 
-local Frame = Instance.new("Frame") Frame.Size = UDim2.new(0, 200, 0, 300) Frame.Position = UDim2.new(0, 0, 0.3, 0) Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50) Frame.BorderSizePixel = 2 Frame.Parent = ScreenGui
+local function createSection(title, parent) local Label = Instance.new("TextLabel") Label.Size = UDim2.new(1, 0, 0, 30) Label.BackgroundColor3 = Color3.fromRGB(70, 70, 70) Label.TextColor3 = Color3.fromRGB(255, 255, 255) Label.Text = title Label.Parent = parent end
+
+local Frame = Instance.new("Frame") Frame.Size = UDim2.new(0, 250, 0, 400) Frame.Position = UDim2.new(0, 0, 0.3, 0) Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50) Frame.BorderSizePixel = 2 Frame.Parent = ScreenGui
 
 local UIListLayout = Instance.new("UIListLayout") UIListLayout.Parent = Frame UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder UIListLayout.Padding = UDim.new(0, 5)
 
-for Name, Id in pairs(Animations) do local Button = Instance.new("TextButton") Button.Size = UDim2.new(1, 0, 0, 50) Button.BackgroundColor3 = Color3.fromRGB(100, 100, 100) Button.Text = Name Button.Parent = Frame
+-- Search Bar local SearchBox = Instance.new("TextBox") SearchBox.Size = UDim2.new(1, 0, 0, 30) SearchBox.PlaceholderText = "Search Animations..." SearchBox.Parent = Frame
 
-Button.MouseButton1Click:Connect(function()
-    local Animator = Humanoid:FindFirstChild("Animator") or Instance.new("Animator", Humanoid)
-    local Animation = Instance.new("Animation")
-    Animation.AnimationId = Id
-    local Track = Animator:LoadAnimation(Animation)
-    Track:Play()
-end)
+-- FE Animations Section createSection("FE Animations", Frame)
+
+local function applyAnimation(Humanoid, Id) if Humanoid then local Animator = Humanoid:FindFirstChild("Animator") or Instance.new("Animator", Humanoid) local Animation = Instance.new("Animation") Animation.AnimationId = Id local Track = Animator:LoadAnimation(Animation) Track:Play() end end
+
+local SelectedAnimationId = nil local function updateAnimationList() for _, child in ipairs(Frame:GetChildren()) do if child:IsA("TextButton") then child:Destroy() end end
+
+for Name, Id in pairs(Animations) do
+    if SearchBox.Text == "" or string.find(Name:lower(), SearchBox.Text:lower()) then
+        local Button = Instance.new("TextButton")
+        Button.Size = UDim2.new(1, 0, 0, 40)
+        Button.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        Button.Text = Name
+        Button.Parent = Frame
+        
+        Button.MouseButton1Click:Connect(function()
+            SelectedAnimationId = Id
+            applyAnimation(Player.Character:FindFirstChild("Humanoid"), Id)
+        end)
+    end
+end
 
 end
 
+SearchBox.Changed:Connect(updateAnimationList) updateAnimationList()
+
+-- FE Scripts Section createSection("FE Scripts", Frame)
+
+local function createScriptButton(name, callback) local Button = Instance.new("TextButton") Button.Size = UDim2.new(1, 0, 0, 40) Button.BackgroundColor3 = Color3.fromRGB(120, 120, 120) Button.Text = name Button.Parent = Frame Button.MouseButton1Click:Connect(callback) end
+
+-- Shiftlock for Mobile createScriptButton("Shiftlock (Mobile)", function() local Camera = game.Workspace.CurrentCamera Camera.CameraType = Enum.CameraType.Scriptable game:GetService("RunService").RenderStepped:Connect(function() Camera.CFrame = Player.Character.Head.CFrame end) end)
+
+-- Speed Hack (Adjustable) createScriptButton("Speed Hack", function() local Humanoid = Player.Character:FindFirstChild("Humanoid") if Humanoid then Humanoid.WalkSpeed = 50 -- Change this value to adjust speed end end)
+
+-- Infinite Jump createScriptButton("Infinite Jump", function() game:GetService("UserInputService").JumpRequest:Connect(function() Player.Character:FindFirstChild("Humanoid"):ChangeState("Jumping") end) end)
+
+-- Empty Section for Future Features createSection("[Empty]", Frame)
+
+-- Reapply animation after respawn Player.CharacterAdded:Connect(function(Character) local Humanoid = Character:WaitForChild("Humanoid") if SelectedAnimationId then applyAnimation(Humanoid, SelectedAnimationId) end end)
+
+ 
