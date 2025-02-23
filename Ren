@@ -1,0 +1,34 @@
+-- Wait 5 seconds notification local NotificationGui = Instance.new("ScreenGui") local NotificationLabel = Instance.new("TextLabel")
+
+NotificationGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui") NotificationLabel.Parent = NotificationGui NotificationLabel.Size = UDim2.new(0, 300, 0, 50) NotificationLabel.Position = UDim2.new(1, -320, 0, 10) NotificationLabel.BackgroundColor3 = Color3.fromRGB(0, 0, 0) NotificationLabel.TextColor3 = Color3.fromRGB(255, 255, 255) NotificationLabel.Text = "Wait for 5 seconds to load" NotificationLabel.TextScaled = true NotificationLabel.BackgroundTransparency = 0.5
+
+-- Remove notification after 5 seconds task.wait(5) NotificationGui:Destroy()
+
+-- GUI Setup task.wait(1) local ScreenGui = Instance.new("ScreenGui") local ToggleButton = Instance.new("ImageButton") local MainFrame = Instance.new("Frame") local TitleLabel = Instance.new("TextLabel") local SearchBar = Instance.new("TextBox") local ScrollFrame = Instance.new("ScrollingFrame")
+
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+-- Toggle Button Setup (Itoshi Sae Image) ToggleButton.Parent = ScreenGui ToggleButton.Size = UDim2.new(0, 60, 0, 60) ToggleButton.Position = UDim2.new(0, 10, 0.5, -30) ToggleButton.BackgroundTransparency = 1 ToggleButton.Image = "rbxassetid://YOUR_ITOSHI_SAE_IMAGE_ID" -- Replace with a valid image ID ToggleButton.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
+
+-- Main Frame Setup MainFrame.Parent = ScreenGui MainFrame.Size = UDim2.new(0, 400, 0, 500) MainFrame.Position = UDim2.new(0.5, -200, 0.5, -250) MainFrame.BackgroundTransparency = 0.3 MainFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50) MainFrame.Visible = true
+
+-- Title Label TitleLabel.Parent = MainFrame TitleLabel.Size = UDim2.new(1, 0, 0, 50) TitleLabel.Text = "FE Animation Hub" TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255) TitleLabel.BackgroundTransparency = 1 TitleLabel.TextScaled = true
+
+-- Search Bar SearchBar.Parent = MainFrame SearchBar.Size = UDim2.new(1, -20, 0, 40) SearchBar.Position = UDim2.new(0, 10, 0, 60) SearchBar.PlaceholderText = "Search Animation..." SearchBar.BackgroundColor3 = Color3.fromRGB(100, 100, 100) SearchBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Scrollable List for Animations ScrollFrame.Parent = MainFrame ScrollFrame.Size = UDim2.new(1, -20, 1, -120) ScrollFrame.Position = UDim2.new(0, 10, 0, 110) ScrollFrame.CanvasSize = UDim2.new(0, 0, 5, 0) ScrollFrame.BackgroundTransparency = 1
+
+-- Function to Add Animation Buttons local function addAnimation(name, animationId) local button = Instance.new("TextButton") button.Parent = ScrollFrame button.Size = UDim2.new(1, -10, 0, 40) button.Text = name button.BackgroundColor3 = Color3.fromRGB(75, 75, 75) button.TextColor3 = Color3.fromRGB(255, 255, 255) button.MouseButton1Click:Connect(function() local char = game.Players.LocalPlayer.Character if char then local humanoid = char:FindFirstChildOfClass("Humanoid") if humanoid then local animator = humanoid:FindFirstChildOfClass("Animator") or Instance.new("Animator", humanoid) local anim = Instance.new("Animation") anim.AnimationId = "rbxassetid://" .. animationId local track = animator:LoadAnimation(anim) track:Play() end end end) end
+
+-- Add animations (example ones, replace with real ones) addAnimation("Zombie", "616168032") addAnimation("Ninja", "656117878") addAnimation("Stylish", "616163682") addAnimation("Robot", "616168550") addAnimation("Cartoony", "742637544")
+
+-- FE Scripts Section local function addScriptButton(name, scriptFunction) local button = Instance.new("TextButton") button.Parent = ScrollFrame button.Size = UDim2.new(1, -10, 0, 40) button.Text = name button.BackgroundColor3 = Color3.fromRGB(75, 75, 75) button.TextColor3 = Color3.fromRGB(255, 255, 255) button.MouseButton1Click:Connect(scriptFunction) end
+
+-- Shift Lock Script addScriptButton("Enable Shift Lock", function() game:GetService("StarterGui"):SetCore("SendNotification", { Title = "Shift Lock Enabled", Text = "Tap anywhere to use shift lock", Duration = 3 }) end)
+
+-- Speed Hack Script addScriptButton("Speed Hack (Adjustable)", function() local player = game.Players.LocalPlayer if player.Character then local humanoid = player.Character:FindFirstChildOfClass("Humanoid") if humanoid then humanoid.WalkSpeed = 50 -- Change speed value here end end end)
+
+-- Infinite Jump Script addScriptButton("Infinite Jump", function() game:GetService("UserInputService").JumpRequest:Connect(function() game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState(Enum.HumanoidStateType.Jumping) end) end)
+
+print("Success - Animation Hub Loaded!")
+
